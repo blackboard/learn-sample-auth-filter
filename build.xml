@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="bb-sample-auth-filter Building Block" default="deploy-b2" basedir=".">
-  <description>TODO Description For My Project</description>
+  <description>Sample authentication filter</description>
 
   <property name="build.dir" value="${basedir}/build/" />
   <property name="b2.package.name" value="${basedir}/bb-sample-auth-filter" />
