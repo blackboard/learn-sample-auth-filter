@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<manifest>
+  <!-- core extension information -->
+    <plugin>
+        <name value= "TODO Enter Building Block Name Here"/>
+        <handle value= "sample-auth-filter"/>
+        <description value= "TODO Description of Building Block"/>
+        <version value= "1.0.0"/>
+        <requires>
+            <bbversion value="9.0"/>
+        </requires>
+        <vendor>
+            <id value="bb"/>
+            <name value="TODO Enter Institution Name Here"/>
+            <url value="http://www.myinstitution.edu/" />
+            <description value="TODO Description of Institution" />
+        </vendor>
+        
+<!--    These two JSPs are displayed when the "remove" and "properties" buttons --> 
+<!--	are pressed on the Building Blocks administration page. 				-->
+<!--    <http-actions>
+            <config value="admin/configure.jsp"/>
+            <remove value="admin/remove.jsp"/>
+        </http-actions>
+ -->    
+        <application-defs>
+            <application handle="sample-auth-filter" type="shared" use-ssl="false" 
+            	name="TODO Name for your application" can-allow-guest="false">
+                <description lang="en_US">TODO Description of your application</description>
+                <links>
+                    <link>
+                        <type value="course_tool"/>
+                        <name value="Example Course tool"/>
+                        <url value="index.jsp" />
+                        <description value="An Example course Tool" />
+                    </link>
+                </links>
+            </application>
+        </application-defs>
+
+<!-- Portal Module Definitions -->
+        <module-defs>
+        </module-defs>
+<!--  Custom Content Types -->
+        <content-handlers>
+        </content-handlers>
+
+<!-- code permissions required for proper operation -->
+        <permissions>
+            <permission type="attribute" name="user.authinfo" actions="get"/>
+            <permission type="attribute" name="user.personalinfo" actions="get,set"/>
+        </permissions>
+
+    </plugin>
+
+</manifest>

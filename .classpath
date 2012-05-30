@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="lib" path="lib/b2deploy-task.jar"/>
+	<classpathentry kind="lib" path="lib/fibbba-ant.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-2.4.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="blackboard.eclipse.plugin.CLASSPATH_CONTAINER/9.1.80257.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
