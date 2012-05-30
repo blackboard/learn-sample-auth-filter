@@ -6,6 +6,7 @@
     <name value="Sample authentication filter" />
     <handle value="sample-auth-filter" />
     <description value="Sample authentication filter demonstrating throttling of login attempts" />
+    <webapp-type value="javaext" />
 
     <version value="1.0.0" />
     <requires>
@@ -19,7 +20,21 @@
       <description value="Blackboard Learn" />
     </vendor>
 
+    <extension-defs>
+      <definition namespace="blackboard.sample.auth.filter">
+        <extension id="beforeLogin"
+                   point="blackboard.platform.authUserPassPreValidation"
+                   class="blackboard.sample.auth.filter.BeforeLogin"
+                   singleton="true" />
+        <extension id="afterLogin"
+                   point="blackboard.platform.authUserPassPostValidation"
+                   class="blackboard.sample.auth.filter.AfterLogin"
+                   singleton="true" />
+      </definition>
+    </extension-defs>
+
     <permissions>
+      <permission type="attribute" name="user.authinfo" actions="get" />
     </permissions>
 
   </plugin>
