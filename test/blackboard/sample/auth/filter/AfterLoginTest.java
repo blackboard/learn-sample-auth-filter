@@ -32,13 +32,13 @@ import blackboard.data.user.User;
  * @author varju
  */
 public class AfterLoginTest {
-  private MockLoginCounter loginCounter;
+  private MockLoginAttemptCounter attemptCounter;
   private AfterLogin validator;
 
   @Before
   public void setup() {
-    loginCounter = new MockLoginCounter();
-    validator = new AfterLogin(loginCounter);
+    attemptCounter = new MockLoginAttemptCounter();
+    validator = new AfterLogin(attemptCounter);
   }
 
   @Test
@@ -46,6 +46,6 @@ public class AfterLoginTest {
     User user = new User();
     user.setUserName("willy");
     validator.postValidationChecks(user);
-    assertEquals("willy", loginCounter.usernameFromSuccessfulLogin);
+    assertEquals("willy", attemptCounter.usernameFromSuccessfulLogin);
   }
 }

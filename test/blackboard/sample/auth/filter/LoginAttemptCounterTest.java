@@ -28,17 +28,17 @@ import java.util.Calendar;
 import org.junit.Before;
 import org.junit.Test;
 
-import blackboard.sample.auth.filter.LoginCounter.LoginHistory;
+import blackboard.sample.auth.filter.LoginAttemptCounter.LoginHistory;
 
 /**
  * @author varju
  */
-public class LoginCounterTest {
-  private LoginCounter counter;
+public class LoginAttemptCounterTest {
+  private LoginAttemptCounter counter;
 
   @Before
   public void setup() {
-    counter = new LoginCounter();
+    counter = new LoginAttemptCounter();
   }
 
   @Test

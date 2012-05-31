@@ -1,6 +1,6 @@
 package blackboard.sample.auth.filter;
 
-public class MockLoginCounter extends LoginCounter {
+public class MockLoginAttemptCounter extends LoginAttemptCounter {
   public boolean shouldBlockResult;
   public String usernameFromShouldBlock;
   public String usernameFromSuccessfulLogin;

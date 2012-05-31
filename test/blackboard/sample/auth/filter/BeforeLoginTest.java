@@ -32,31 +32,31 @@ import blackboard.platform.authentication.ValidationStatus;
  * @author varju
  */
 public class BeforeLoginTest {
-  private MockLoginCounter loginCounter;
+  private MockLoginAttemptCounter attemptCounter;
   private BeforeLogin validator;
 
   @Before
   public void setup() {
-    loginCounter = new MockLoginCounter();
-    validator = new BeforeLogin(loginCounter);
+    attemptCounter = new MockLoginAttemptCounter();
+    validator = new BeforeLogin(attemptCounter);
   }
 
   @Test
   public void loginCounterCalledWithUsername() {
     validator.preValidationChecks("userasdf", "pass");
-    assertEquals("userasdf", loginCounter.usernameFromShouldBlock);
+    assertEquals("userasdf", attemptCounter.usernameFromShouldBlock);
   }
 
   @Test
   public void checkPassesIfLoginCounterIsHappy() {
-    loginCounter.shouldBlockResult = false;
+    attemptCounter.shouldBlockResult = false;
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.Continue, result.getStatus());
   }
 
   @Test
   public void checkFailsIfLoginCounterIsMad() {
-    loginCounter.shouldBlockResult = true;
+    attemptCounter.shouldBlockResult = true;
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.UserDenied, result.getStatus());
     assertEquals("Account locked. Try again in a few minutes.", result.getMessage());

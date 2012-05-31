@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * @author varju
  */
-public class LoginCounter {
+public class LoginAttemptCounter {
   /** Maximum time we'll track a login attempt for */
   private static final int TIME_WINDOW_MINUTES = 10;
   private static final int TIME_WINDOW_MILLIS = TIME_WINDOW_MINUTES * 60 * 1000;
@@ -46,9 +46,9 @@ public class LoginCounter {
   /** Maximum number of login attempts allowed within this window of time */
   private static final int MAX_ATTEMPTS = 3;
 
-  private static final LoginCounter INSTANCE = new LoginCounter();
+  private static final LoginAttemptCounter INSTANCE = new LoginAttemptCounter();
 
-  public static LoginCounter getInstance() {
+  public static LoginAttemptCounter getInstance() {
     return INSTANCE;
   }
 

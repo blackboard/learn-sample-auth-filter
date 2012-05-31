@@ -34,25 +34,25 @@ import blackboard.platform.log.LogServiceFactory;
  * Limitations:
  * <ul>
  * <li>This assumes that the username typed into the login box matches the User.userName field. If it doesn't match,
- * previous login attempts will not be cleared out until {@link LoginCounter#TIME_WINDOW_MINUTES} elapse.</li>
+ * previous login attempts will not be cleared out until {@link LoginAttemptCounter#TIME_WINDOW_MINUTES} elapse.</li>
  * <ul>
  * 
  * @author varju
  */
 public class AfterLogin extends AbstractUsernamePasswordPostValidationCheck {
-  private final LoginCounter loginCounter;
+  private final LoginAttemptCounter attemptCounter;
 
   public AfterLogin() {
-    this(LoginCounter.getInstance());
+    this(LoginAttemptCounter.getInstance());
   }
 
-  public AfterLogin(LoginCounter counter) {
-    loginCounter = counter;
+  public AfterLogin(LoginAttemptCounter counter) {
+    attemptCounter = counter;
   }
 
   @Override
   public ValidationResult postValidationChecks(User user) {
-    loginCounter.successfulLogin(user.getUserName());
+    attemptCounter.successfulLogin(user.getUserName());
 
     LogServiceFactory.getInstance().logError("AfterLogin: user=" + user.getUserName());
     ValidationResult result = new ValidationResult(null);

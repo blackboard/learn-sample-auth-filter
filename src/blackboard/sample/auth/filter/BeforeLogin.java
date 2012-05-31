@@ -33,25 +33,22 @@ import blackboard.platform.log.LogServiceFactory;
  * @author varju
  */
 public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
-  private final LoginCounter loginCounter;
+  private final LoginAttemptCounter attemptCounter;
 
   public BeforeLogin() {
-    this(LoginCounter.getInstance());
+    this(LoginAttemptCounter.getInstance());
   }
 
-  public BeforeLogin(LoginCounter counter) {
-    loginCounter = counter;
+  public BeforeLogin(LoginAttemptCounter counter) {
+    attemptCounter = counter;
   }
 
   @Override
   public ValidationResult preValidationChecks(String username, String password) {
     LogServiceFactory.getInstance().logError("BeforeLogin: username=" + username + ", password=" + password);
 
-    boolean shouldBlock = loginCounter.shouldBlock(username);
     ValidationResult result = new ValidationResult(null);
-    result.setStatus(shouldBlock ? ValidationStatus.UserDenied : ValidationStatus.Continue);
-
-    if (shouldBlock) {
+    if (attemptCounter.shouldBlock(username)) {
       result.setMessage("Account locked. Try again in a few minutes.");
       result.setStatus(ValidationStatus.UserDenied);
     } else {
