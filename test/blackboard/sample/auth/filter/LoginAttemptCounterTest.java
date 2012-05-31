@@ -150,6 +150,17 @@ public class LoginAttemptCounterTest {
   }
 
   @Test
+  public void spacedOutLoginAttemptsAreNotBlocked() {
+    long firstRequestTime = 1;
+    assertFalse(counter.shouldBlock("user", firstRequestTime));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + ONE_MINUTE));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 2 * ONE_MINUTE));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 3 * ONE_MINUTE));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 * ONE_MINUTE));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 5 * ONE_MINUTE));
+  }
+
+  @Test
   public void successfulLoginClearsHistory() {
     assertFalse(counter.shouldBlock("user"));
     assertFalse(counter.shouldBlock("user"));

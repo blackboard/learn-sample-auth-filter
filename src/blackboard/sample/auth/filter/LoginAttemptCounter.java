@@ -24,6 +24,7 @@ package blackboard.sample.auth.filter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,6 +112,16 @@ public class LoginAttemptCounter {
     }
 
     public void removeOldLoginAttempts(long timeNow) {
+      // purge attempts that are older than we care about
+      Iterator<Long> seenIter = seen.iterator();
+      while (seenIter.hasNext()) {
+        long timestamp = seenIter.next();
+        if (timestamp + TIME_WINDOW_MILLIS < timeNow) {
+          seenIter.remove();
+        }
+      }
+
+      // unlock the account if they've waited long enough
       if (lockedUntil != 0 && lockedUntil < timeNow) {
         seen.clear();
         lockedUntil = 0;
