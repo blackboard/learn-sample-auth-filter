@@ -50,6 +50,14 @@ public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
     boolean shouldBlock = loginCounter.shouldBlock(username);
     ValidationResult result = new ValidationResult(null);
     result.setStatus(shouldBlock ? ValidationStatus.UserDenied : ValidationStatus.Continue);
+
+    if (shouldBlock) {
+      result.setMessage("Account locked. Try again in a few minutes.");
+      result.setStatus(ValidationStatus.UserDenied);
+    } else {
+      result.setStatus(ValidationStatus.Continue);
+    }
+
     return result;
   }
 }

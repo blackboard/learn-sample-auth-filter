@@ -40,16 +40,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class LoginCounter {
   /** Maximum time we'll track a login attempt for */
-  private static final int TIME_WINDOW = 10 * 60 * 1000;
+  private static final int TIME_WINDOW_MINUTES = 10;
+  private static final int TIME_WINDOW_MILLIS = TIME_WINDOW_MINUTES * 60 * 1000;
 
   /** Maximum number of login attempts allowed within this window of time */
   private static final int MAX_ATTEMPTS = 3;
 
-   private static final LoginCounter INSTANCE = new LoginCounter();
-  
-   public static LoginCounter getInstance() {
-   return INSTANCE;
-   }
+  private static final LoginCounter INSTANCE = new LoginCounter();
+
+  public static LoginCounter getInstance() {
+    return INSTANCE;
+  }
 
   /**
    * Determines whether to block the login attempt for this username. Also records the login attempt for future use.
@@ -79,7 +80,7 @@ public class LoginCounter {
     Iterator<Long> seen = userHistory.seen.iterator();
     while (seen.hasNext()) {
       long timestamp = seen.next();
-      if (timestamp + TIME_WINDOW < now) {
+      if (timestamp + TIME_WINDOW_MILLIS < now) {
         seen.remove();
       }
     }

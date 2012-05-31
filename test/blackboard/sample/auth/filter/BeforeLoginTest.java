@@ -59,6 +59,7 @@ public class BeforeLoginTest {
     loginCounter.shouldBlockResult = true;
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.UserDenied, result.getStatus());
+    assertEquals("Account locked. Try again in a few minutes.", result.getMessage());
   }
 
   private static class MockLoginCounter extends LoginCounter {
