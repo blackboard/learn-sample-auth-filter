@@ -112,4 +112,14 @@ public class LoginCounterTest {
     assertFalse(counter.shouldBlock("user"));
     assertTrue(counter.shouldBlock("user"));
   }
+
+  @Test
+  public void successfulLoginRemovesAllEntries() {
+    counter.shouldBlock("user");
+    counter.shouldBlock("user");
+    assertEquals(2, counter.getHistory("user").seen.size());
+
+    counter.successfulLogin("user");
+    assertNull(counter.getHistory("user"));
+  }
 }

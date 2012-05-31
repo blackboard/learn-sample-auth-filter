@@ -21,42 +21,31 @@
  */
 package blackboard.sample.auth.filter;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import blackboard.data.user.User;
-import blackboard.platform.authentication.AbstractUsernamePasswordPostValidationCheck;
-import blackboard.platform.authentication.ValidationResult;
-import blackboard.platform.authentication.ValidationStatus;
-import blackboard.platform.log.LogServiceFactory;
 
 /**
- * Executes after validation has been attempted for the username/password pair. If there have been too many bad login
- * attempts for this user, we'll temporarily lock their account.
- * <p>
- * Limitations:
- * <ul>
- * <li>This assumes that the username typed into the login box matches the User.userName field. If it doesn't match,
- * previous login attempts will not be cleared out until {@link LoginCounter#TIME_WINDOW_MINUTES} elapse.</li>
- * <ul>
- * 
  * @author varju
  */
-public class AfterLogin extends AbstractUsernamePasswordPostValidationCheck {
-  private final LoginCounter loginCounter;
+public class AfterLoginTest {
+  private MockLoginCounter loginCounter;
+  private AfterLogin validator;
 
-  public AfterLogin() {
-    this(LoginCounter.getInstance());
+  @Before
+  public void setup() {
+    loginCounter = new MockLoginCounter();
+    validator = new AfterLogin(loginCounter);
   }
 
-  public AfterLogin(LoginCounter counter) {
-    loginCounter = counter;
-  }
-
-  @Override
-  public ValidationResult postValidationChecks(User user) {
-    loginCounter.successfulLogin(user.getUserName());
-
-    LogServiceFactory.getInstance().logError("AfterLogin: user=" + user.getUserName());
-    ValidationResult result = new ValidationResult(null);
-    result.setStatus(ValidationStatus.Continue);
-    return result;
+  @Test
+  public void successfulLoginClearsCounters() {
+    User user = new User();
+    user.setUserName("willy");
+    validator.postValidationChecks(user);
+    assertEquals("willy", loginCounter.usernameFromSuccessfulLogin);
   }
 }

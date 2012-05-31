@@ -59,6 +59,13 @@ public class LoginCounter {
     return shouldBlock(username, Calendar.getInstance().getTimeInMillis());
   }
 
+  /**
+   * Indicates that this user logged in successfully, and that any previous records associated with them may be removed.
+   */
+  public void successfulLogin(String username) {
+    history.remove(username);
+  }
+
   /** A per-user set of recent login attempts */
   private Map<String, LoginHistory> history = new ConcurrentHashMap<String, LoginHistory>();
 

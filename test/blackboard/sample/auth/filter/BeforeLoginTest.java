@@ -44,7 +44,7 @@ public class BeforeLoginTest {
   @Test
   public void loginCounterCalledWithUsername() {
     validator.preValidationChecks("userasdf", "pass");
-    assertEquals("userasdf", loginCounter.username);
+    assertEquals("userasdf", loginCounter.usernameFromShouldBlock);
   }
 
   @Test
@@ -60,16 +60,5 @@ public class BeforeLoginTest {
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.UserDenied, result.getStatus());
     assertEquals("Account locked. Try again in a few minutes.", result.getMessage());
-  }
-
-  private static class MockLoginCounter extends LoginCounter {
-    private boolean shouldBlockResult;
-    private String username;
-
-    @Override
-    public boolean shouldBlock(String username) {
-      this.username = username;
-      return shouldBlockResult;
-    }
   }
 }
