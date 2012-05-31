@@ -21,6 +21,7 @@
  */
 package blackboard.sample.auth.filter;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import blackboard.platform.authentication.AbstractUsernamePasswordPreValidationCheck;
@@ -53,8 +54,11 @@ public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
   public ValidationResult preValidationChecks(String username, String password) {
     ValidationResult result = new ValidationResult(null);
     if (attemptCounter.shouldBlock(username)) {
-      result.setMessage("Account locked. Try again in a few minutes.");
       result.setStatus(ValidationStatus.UserDenied);
+
+      long lockedForMillis = attemptCounter.lockedUntil(username) - Calendar.getInstance().getTimeInMillis();
+      long lockedForSeconds = Math.round(lockedForMillis / 1000.0);
+      result.setMessage(String.format("Account locked for %d seconds.", lockedForSeconds));
 
       AuthenticationEvent event = buildAuthFailedEvent(username);
       authLogger.logAuthenticationEvent(event);

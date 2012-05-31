@@ -34,6 +34,8 @@ import blackboard.sample.auth.filter.LoginAttemptCounter.LoginHistory;
  * @author varju
  */
 public class LoginAttemptCounterTest {
+  private static final int ONE_MINUTE = 60 * 1000;
+
   private LoginAttemptCounter counter;
 
   @Before
@@ -100,8 +102,7 @@ public class LoginAttemptCounterTest {
     assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
     assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
 
-    long oneMinute = 60 * 1000;
-    assertTrue(counter.shouldBlock("user", firstRequestTime + 2 + oneMinute));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 2 + ONE_MINUTE));
   }
 
   @Test
@@ -112,8 +113,7 @@ public class LoginAttemptCounterTest {
     assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
     assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
 
-    long oneMinute = 60 * 1000;
-    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 + oneMinute));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 + ONE_MINUTE));
   }
 
   @Test
@@ -128,8 +128,25 @@ public class LoginAttemptCounterTest {
     assertTrue(counter.shouldBlock("user", firstRequestTime + 2000));
     assertTrue(counter.shouldBlock("user", firstRequestTime + 3000));
 
-    long oneMinute = 60 * 1000;
-    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 + oneMinute));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 + ONE_MINUTE));
+  }
+
+  @Test
+  public void lockedUntilShowsCorrectTime() throws Exception {
+    assertEquals(0, counter.lockedUntil("user"));
+
+    long firstRequestTime = 1;
+    assertFalse(counter.shouldBlock("user", firstRequestTime));
+    assertEquals(0, counter.lockedUntil("user"));
+
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 1));
+    assertEquals(0, counter.lockedUntil("user"));
+
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
+    assertEquals(0, counter.lockedUntil("user"));
+
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
+    assertEquals(firstRequestTime + 3 + ONE_MINUTE, counter.lockedUntil("user"));
   }
 
   @Test

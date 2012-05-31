@@ -24,7 +24,6 @@ package blackboard.sample.auth.filter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,7 +70,7 @@ public class LoginAttemptCounter {
    * 
    * @return Time in millis, or 0 if account is not locked
    */
-  private long lockedUntil(String username) {
+  public long lockedUntil(String username) {
     LoginHistory userHistory = history.get(username);
     if (null == userHistory)
       return 0;

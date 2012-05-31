@@ -26,6 +26,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
+import java.util.Calendar;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -65,6 +67,7 @@ public class BeforeLoginTest {
   @Test
   public void checkPassesIfLoginCounterIsHappy() {
     attemptCounter.shouldBlockResult = false;
+
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.Continue, result.getStatus());
     assertNull(authLogger.event);
@@ -73,14 +76,17 @@ public class BeforeLoginTest {
   @Test
   public void checkFailsIfLoginCounterIsMad() {
     attemptCounter.shouldBlockResult = true;
+    attemptCounter.lockedUntil = Calendar.getInstance().getTimeInMillis() + 37 * 1000;
+
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.UserDenied, result.getStatus());
-    assertEquals("Account locked. Try again in a few minutes.", result.getMessage());
+    assertEquals("Account locked for 37 seconds.", result.getMessage());
   }
 
   @Test
   public void failureLogsAuthEvent() {
     attemptCounter.shouldBlockResult = true;
+
     validator.preValidationChecks("fflintstone", "pass");
     assertNotNull(authLogger.event);
     assertEquals("fflintstone", authLogger.event.getUsername());
