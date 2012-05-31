@@ -78,8 +78,8 @@ public class LoginAttemptCounterTest {
 
   @Test
   public void staleEntriesAreRemovedAutomatically() throws Exception {
-    long tenMinutesAgo = Calendar.getInstance().getTimeInMillis() - 10 * 60 * 1000;
-    counter.shouldBlock("user", tenMinutesAgo);
+    long oneMinuteAgo = Calendar.getInstance().getTimeInMillis() - 1 * 60 * 1000;
+    counter.shouldBlock("user", oneMinuteAgo);
     long before = Calendar.getInstance().getTimeInMillis();
     Thread.sleep(1);
     assertFalse(counter.shouldBlock("user"));
@@ -92,8 +92,8 @@ public class LoginAttemptCounterTest {
 
   @Test
   public void shouldBlockRemovesStaleFromSeenList() throws Exception {
-    long tenMinutesAgo = Calendar.getInstance().getTimeInMillis() - 10 * 60 * 1000;
-    counter.shouldBlock("user", tenMinutesAgo);
+    long oneMinuteAgo = Calendar.getInstance().getTimeInMillis() - 1 * 60 * 1000;
+    counter.shouldBlock("user", oneMinuteAgo);
     long before = Calendar.getInstance().getTimeInMillis();
     Thread.sleep(1);
     assertFalse(counter.shouldBlock("user"));
@@ -106,8 +106,8 @@ public class LoginAttemptCounterTest {
 
   @Test
   public void usersAreBlockedAfterTooManyAttempts() {
-    long nineMinutesAgo = Calendar.getInstance().getTimeInMillis() - 9 * 60 * 1000;
-    assertFalse(counter.shouldBlock("user", nineMinutesAgo));
+    long almostOneMinuteAgo = Calendar.getInstance().getTimeInMillis() - 1 * 59 * 1000;
+    assertFalse(counter.shouldBlock("user", almostOneMinuteAgo));
     assertFalse(counter.shouldBlock("user"));
     assertFalse(counter.shouldBlock("user"));
     assertTrue(counter.shouldBlock("user"));

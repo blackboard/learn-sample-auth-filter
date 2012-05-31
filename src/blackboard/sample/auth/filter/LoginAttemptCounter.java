@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class LoginAttemptCounter {
   /** Maximum time we'll track a login attempt for */
-  private static final int TIME_WINDOW_MINUTES = 10;
+  private static final int TIME_WINDOW_MINUTES = 1;
   private static final int TIME_WINDOW_MILLIS = TIME_WINDOW_MINUTES * 60 * 1000;
 
   /** Maximum number of login attempts allowed within this window of time */
