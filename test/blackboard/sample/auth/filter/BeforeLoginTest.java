@@ -21,24 +21,39 @@
  */
 package blackboard.sample.auth.filter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import blackboard.platform.authentication.AuthenticationEvent;
 import blackboard.platform.authentication.ValidationResult;
 import blackboard.platform.authentication.ValidationStatus;
+import blackboard.platform.authentication.log.AuthenticationLogger;
 
 /**
  * @author varju
  */
 public class BeforeLoginTest {
+  @Mock
+  private AuthenticationEvent authEvent;
+
   private MockLoginAttemptCounter attemptCounter;
+  private MockAuthenticationLogger authLogger;
   private BeforeLogin validator;
 
   @Before
   public void setup() {
+    MockitoAnnotations.initMocks(this);
+
     attemptCounter = new MockLoginAttemptCounter();
-    validator = new BeforeLogin(attemptCounter);
+    authLogger = new MockAuthenticationLogger();
+    validator = new MockBeforeLogin();
   }
 
   @Test
@@ -52,6 +67,7 @@ public class BeforeLoginTest {
     attemptCounter.shouldBlockResult = false;
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.Continue, result.getStatus());
+    assertNull(authLogger.event);
   }
 
   @Test
@@ -60,5 +76,38 @@ public class BeforeLoginTest {
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.UserDenied, result.getStatus());
     assertEquals("Account locked. Try again in a few minutes.", result.getMessage());
+  }
+
+  @Test
+  public void failureLogsAuthEvent() {
+    attemptCounter.shouldBlockResult = true;
+    validator.preValidationChecks("fflintstone", "pass");
+    assertNotNull(authLogger.event);
+    assertEquals("fflintstone", authLogger.event.getUsername());
+  }
+
+  private static class MockAuthenticationLogger implements AuthenticationLogger {
+    public AuthenticationEvent event;
+
+    @Override
+    public void logAuthenticationEvent(AuthenticationEvent event) {
+      this.event = event;
+    }
+
+    @Override
+    public void flush() {
+    }
+  }
+
+  private class MockBeforeLogin extends BeforeLogin {
+    public MockBeforeLogin() {
+      super(attemptCounter, authLogger);
+    }
+
+    @Override
+    protected AuthenticationEvent buildAuthFailedEvent(String username) {
+      when(authEvent.getUsername()).thenReturn(username);
+      return authEvent;
+    }
   }
 }

@@ -21,9 +21,14 @@
  */
 package blackboard.sample.auth.filter;
 
+import java.util.Date;
+
 import blackboard.platform.authentication.AbstractUsernamePasswordPreValidationCheck;
+import blackboard.platform.authentication.AuthenticationEvent;
+import blackboard.platform.authentication.EventType;
 import blackboard.platform.authentication.ValidationResult;
 import blackboard.platform.authentication.ValidationStatus;
+import blackboard.platform.authentication.log.AuthenticationLogger;
 import blackboard.platform.log.LogServiceFactory;
 
 /**
@@ -34,13 +39,15 @@ import blackboard.platform.log.LogServiceFactory;
  */
 public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
   private final LoginAttemptCounter attemptCounter;
+  private final AuthenticationLogger authLogger;
 
   public BeforeLogin() {
-    this(LoginAttemptCounter.getInstance());
+    this(LoginAttemptCounter.getInstance(), AuthenticationLogger.Factory.getInstance());
   }
 
-  public BeforeLogin(LoginAttemptCounter counter) {
+  public BeforeLogin(LoginAttemptCounter counter, AuthenticationLogger logger) {
     attemptCounter = counter;
+    authLogger = logger;
   }
 
   @Override
@@ -51,10 +58,17 @@ public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
     if (attemptCounter.shouldBlock(username)) {
       result.setMessage("Account locked. Try again in a few minutes.");
       result.setStatus(ValidationStatus.UserDenied);
+
+      AuthenticationEvent event = buildAuthFailedEvent(username);
+      authLogger.logAuthenticationEvent(event);
     } else {
       result.setStatus(ValidationStatus.Continue);
     }
 
     return result;
+  }
+
+  protected AuthenticationEvent buildAuthFailedEvent(String username) {
+    return new AuthenticationEvent(EventType.Error, new Date(), username, "Too many login attempts", null, null);
   }
 }
