@@ -16,6 +16,7 @@ This is a sample Building Block which demonstrates how to filter authentication 
 
 - Login counts are held in memory rather than persisting. Among other things, this means that login counts are not replicated between application servers.
 - Parameters are not configurable by the administrator.
+- Text is not localized.
 
 == Limitations in the current solution ==
 
