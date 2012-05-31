@@ -24,7 +24,7 @@ package blackboard.sample.auth.filter;
 /**
  * @author varju
  */
-public class MockLoginAttemptCounter extends LoginAttemptCounter {
+public class MockLoginAttemptCounter implements LoginAttemptCounter {
   public long lockedUntil;
   public boolean shouldBlockResult;
   public String usernameFromShouldBlock;

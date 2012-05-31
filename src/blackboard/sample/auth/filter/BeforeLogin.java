@@ -42,7 +42,7 @@ public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
   private final AuthenticationLogger authLogger;
 
   public BeforeLogin() {
-    this(LoginAttemptCounter.getInstance(), AuthenticationLogger.Factory.getInstance());
+    this(LoginAttemptCounter.Factory.getInstance(), AuthenticationLogger.Factory.getInstance());
   }
 
   public BeforeLogin(LoginAttemptCounter counter, AuthenticationLogger logger) {

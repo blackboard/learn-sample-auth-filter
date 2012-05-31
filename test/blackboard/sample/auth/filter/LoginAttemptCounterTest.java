@@ -28,7 +28,7 @@ import java.util.Calendar;
 import org.junit.Before;
 import org.junit.Test;
 
-import blackboard.sample.auth.filter.LoginAttemptCounter.LoginHistory;
+import blackboard.sample.auth.filter.LoginAttemptCounterImpl.LoginHistory;
 
 /**
  * @author varju
@@ -36,11 +36,11 @@ import blackboard.sample.auth.filter.LoginAttemptCounter.LoginHistory;
 public class LoginAttemptCounterTest {
   private static final int ONE_MINUTE = 60 * 1000;
 
-  private LoginAttemptCounter counter;
+  private LoginAttemptCounterImpl counter;
 
   @Before
   public void setup() {
-    counter = new LoginAttemptCounter();
+    counter = new LoginAttemptCounterImpl();
   }
 
   @Test

@@ -36,7 +36,7 @@ public class AfterLogin extends AbstractUsernamePasswordPostValidationCheck {
   private final LoginAttemptCounter attemptCounter;
 
   public AfterLogin() {
-    this(LoginAttemptCounter.getInstance());
+    this(LoginAttemptCounter.Factory.getInstance());
   }
 
   public AfterLogin(LoginAttemptCounter counter) {
