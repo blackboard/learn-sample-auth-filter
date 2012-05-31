@@ -29,7 +29,6 @@ import blackboard.platform.authentication.EventType;
 import blackboard.platform.authentication.ValidationResult;
 import blackboard.platform.authentication.ValidationStatus;
 import blackboard.platform.authentication.log.AuthenticationLogger;
-import blackboard.platform.log.LogServiceFactory;
 
 /**
  * Executes before any validation is attempted for the username/password pair. This will abort the login attempt if the
@@ -52,8 +51,6 @@ public class BeforeLogin extends AbstractUsernamePasswordPreValidationCheck {
 
   @Override
   public ValidationResult preValidationChecks(String username, String password) {
-    LogServiceFactory.getInstance().logError("BeforeLogin: username=" + username + ", password=" + password);
-
     ValidationResult result = new ValidationResult(null);
     if (attemptCounter.shouldBlock(username)) {
       result.setMessage("Account locked. Try again in a few minutes.");
