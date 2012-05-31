@@ -29,11 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Keeps track of recently seen login attempts. Shortcuts taken to keep this example simple:
- * <ul>
- * <li>Attempts are held in memory rather than persisting</li>
- * <li>Parameters are not configurable by the administrator</li>
- * </ul>
+ * Keeps track of recently seen login attempts.
  * 
  * @author varju
  */

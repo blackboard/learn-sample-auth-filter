@@ -29,12 +29,6 @@ import blackboard.platform.authentication.ValidationStatus;
 /**
  * Executes after validation has been attempted for the username/password pair. If there have been too many bad login
  * attempts for this user, we'll temporarily lock their account.
- * <p>
- * Limitations:
- * <ul>
- * <li>This assumes that the username typed into the login box matches the User.userName field. If it doesn't match,
- * previous login attempts will not be cleared out until {@link LoginAttemptCounter#TIME_WINDOW_MINUTES} elapse.</li>
- * <ul>
  * 
  * @author varju
  */
