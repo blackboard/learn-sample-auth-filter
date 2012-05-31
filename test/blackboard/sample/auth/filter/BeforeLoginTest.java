@@ -32,16 +32,43 @@ import blackboard.platform.authentication.ValidationStatus;
  * @author varju
  */
 public class BeforeLoginTest {
+  private MockLoginCounter loginCounter;
   private BeforeLogin validator;
 
   @Before
   public void setup() {
-    validator = new BeforeLogin();
+    loginCounter = new MockLoginCounter();
+    validator = new BeforeLogin(loginCounter);
   }
 
   @Test
-  public void firstLoginShouldWork() {
+  public void loginCounterCalledWithUsername() {
+    validator.preValidationChecks("userasdf", "pass");
+    assertEquals("userasdf", loginCounter.username);
+  }
+
+  @Test
+  public void checkPassesIfLoginCounterIsHappy() {
+    loginCounter.shouldBlockResult = false;
     ValidationResult result = validator.preValidationChecks("user", "pass");
     assertEquals(ValidationStatus.Continue, result.getStatus());
+  }
+
+  @Test
+  public void checkFailsIfLoginCounterIsMad() {
+    loginCounter.shouldBlockResult = true;
+    ValidationResult result = validator.preValidationChecks("user", "pass");
+    assertEquals(ValidationStatus.UserDenied, result.getStatus());
+  }
+
+  private static class MockLoginCounter extends LoginCounter {
+    private boolean shouldBlockResult;
+    private String username;
+
+    @Override
+    public boolean shouldBlock(String username) {
+      this.username = username;
+      return shouldBlockResult;
+    }
   }
 }

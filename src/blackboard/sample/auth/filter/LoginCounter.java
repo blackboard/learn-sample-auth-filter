@@ -45,11 +45,11 @@ public class LoginCounter {
   /** Maximum number of login attempts allowed within this window of time */
   private static final int MAX_ATTEMPTS = 3;
 
-  // private static final LoginCounter INSTANCE = new LoginCounter();
-  //
-  // public static LoginCounter getInstance() {
-  // return INSTANCE;
-  // }
+   private static final LoginCounter INSTANCE = new LoginCounter();
+  
+   public static LoginCounter getInstance() {
+   return INSTANCE;
+   }
 
   /**
    * Determines whether to block the login attempt for this username. Also records the login attempt for future use.
