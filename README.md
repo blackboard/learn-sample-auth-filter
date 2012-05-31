@@ -1,0 +1,1 @@
+This is a sample Building Block which demonstrates how to filter authentication requests using the UsernamePasswordPreValidationCheck and UsernamePasswordPostValidationCheck extension points.
