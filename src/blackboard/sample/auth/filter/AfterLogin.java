@@ -25,7 +25,6 @@ import blackboard.data.user.User;
 import blackboard.platform.authentication.AbstractUsernamePasswordPostValidationCheck;
 import blackboard.platform.authentication.ValidationResult;
 import blackboard.platform.authentication.ValidationStatus;
-import blackboard.platform.log.LogServiceFactory;
 
 /**
  * Executes after validation has been attempted for the username/password pair. If there have been too many bad login
@@ -54,7 +53,6 @@ public class AfterLogin extends AbstractUsernamePasswordPostValidationCheck {
   public ValidationResult postValidationChecks(User user) {
     attemptCounter.successfulLogin(user.getUserName());
 
-    LogServiceFactory.getInstance().logError("AfterLogin: user=" + user.getUserName());
     ValidationResult result = new ValidationResult(null);
     result.setStatus(ValidationStatus.Continue);
     return result;
