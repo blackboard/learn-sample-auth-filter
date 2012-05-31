@@ -19,7 +19,7 @@
 
   <target name="check-compatibility">
     <taskdef name="fibbba" classname="com.blackboard.fibbba.CheckFibbbaTask" classpath="${basedir}/lib/fibbba-ant.jar" />
-    <fibbba srcfile="${b2.package.name}.war" email="youremailaddress@gmail.com" />
+    <fibbba srcfile="${b2.package.name}.war" email="youremailaddress@gmail.com" failOnJsp="false" />
   </target>
 
 </project>
