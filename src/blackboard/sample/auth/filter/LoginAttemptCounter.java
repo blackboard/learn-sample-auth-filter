@@ -66,31 +66,31 @@ public class LoginAttemptCounter {
     history.remove(username);
   }
 
+  /**
+   * Indicates what time the account will be unlocked
+   * 
+   * @return Time in millis, or 0 if account is not locked
+   */
+  private long lockedUntil(String username) {
+    LoginHistory userHistory = history.get(username);
+    if (null == userHistory)
+      return 0;
+    else
+      return userHistory.lockedUntil;
+  }
+
   /** A per-user set of recent login attempts */
   private Map<String, LoginHistory> history = new ConcurrentHashMap<String, LoginHistory>();
 
-  protected boolean shouldBlock(String username, long timestamp) {
+  protected boolean shouldBlock(String username, long timeNow) {
     LoginHistory userHistory = history.get(username);
     if (null == userHistory) {
       userHistory = new LoginHistory();
       history.put(username, userHistory);
     } else {
-      removeOldLoginAttempts(userHistory);
+      userHistory.removeOldLoginAttempts(timeNow);
     }
-    userHistory.lastSeen(timestamp);
-
-    return (userHistory.seen.size() > MAX_ATTEMPTS);
-  }
-
-  private void removeOldLoginAttempts(LoginHistory userHistory) {
-    long now = Calendar.getInstance().getTimeInMillis();
-    Iterator<Long> seen = userHistory.seen.iterator();
-    while (seen.hasNext()) {
-      long timestamp = seen.next();
-      if (timestamp + TIME_WINDOW_MILLIS < now) {
-        seen.remove();
-      }
-    }
+    return userHistory.shouldBlock(timeNow);
   }
 
   protected LoginHistory getHistory(String username) {
@@ -99,14 +99,27 @@ public class LoginAttemptCounter {
 
   protected static class LoginHistory {
     protected final List<Long> seen;
+    private long lockedUntil;
 
     public LoginHistory() {
       seen = Collections.synchronizedList(new ArrayList<Long>());
     }
 
-    public LoginHistory lastSeen(long lastSeen) {
-      seen.add(lastSeen);
-      return this;
+    public boolean shouldBlock(long timeNow) {
+      seen.add(timeNow);
+
+      if (lockedUntil == 0 && seen.size() > MAX_ATTEMPTS) {
+        lockedUntil = timeNow + TIME_WINDOW_MILLIS;
+      }
+
+      return lockedUntil > timeNow;
+    }
+
+    public void removeOldLoginAttempts(long timeNow) {
+      if (lockedUntil != 0 && lockedUntil < timeNow) {
+        seen.clear();
+        lockedUntil = 0;
+      }
     }
   }
 }

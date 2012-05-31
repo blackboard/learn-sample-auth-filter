@@ -42,11 +42,6 @@ public class LoginAttemptCounterTest {
   }
 
   @Test
-  public void usersAreNotBlockedOnFirstAttempt() {
-    assertFalse(counter.shouldBlock("user"));
-  }
-
-  @Test
   public void noArgVariantOfShouldBlockCallsHelperWithCurrentTime() throws Exception {
     long before = Calendar.getInstance().getTimeInMillis();
     Thread.sleep(1);
@@ -63,63 +58,100 @@ public class LoginAttemptCounterTest {
   }
 
   @Test
-  public void callingShouldBlockTwiceAppendsToSeenList() throws Exception {
+  public void usersAreNotBlockedOnFirstAttempt() {
     assertFalse(counter.shouldBlock("user"));
-    Thread.sleep(1);
-    assertFalse(counter.shouldBlock("user"));
-
-    LoginHistory history = counter.getHistory("user");
-    assertEquals(2, history.seen.size());
-
-    long seen1 = history.seen.get(0);
-    long seen2 = history.seen.get(1);
-    assertTrue(seen1 < seen2);
   }
 
   @Test
-  public void staleEntriesAreRemovedAutomatically() throws Exception {
-    long oneMinuteAgo = Calendar.getInstance().getTimeInMillis() - 1 * 60 * 1000;
-    counter.shouldBlock("user", oneMinuteAgo);
-    long before = Calendar.getInstance().getTimeInMillis();
-    Thread.sleep(1);
+  public void usersAreNotBlockedOnSecondAttempt() {
     assertFalse(counter.shouldBlock("user"));
-
-    LoginHistory history = counter.getHistory("user");
-    assertEquals(1, history.seen.size());
-    long lastSeen = history.seen.get(0);
-    assertTrue(before < lastSeen);
+    assertFalse(counter.shouldBlock("user"));
   }
 
   @Test
-  public void shouldBlockRemovesStaleFromSeenList() throws Exception {
-    long oneMinuteAgo = Calendar.getInstance().getTimeInMillis() - 1 * 60 * 1000;
-    counter.shouldBlock("user", oneMinuteAgo);
-    long before = Calendar.getInstance().getTimeInMillis();
-    Thread.sleep(1);
+  public void usersAreNotBlockedOnThirdAttempt() {
     assertFalse(counter.shouldBlock("user"));
-
-    LoginHistory history = counter.getHistory("user");
-    assertEquals(1, history.seen.size());
-    long lastSeen = history.seen.get(0);
-    assertTrue(before < lastSeen);
+    assertFalse(counter.shouldBlock("user"));
+    assertFalse(counter.shouldBlock("user"));
   }
 
   @Test
-  public void usersAreBlockedAfterTooManyAttempts() {
-    long almostOneMinuteAgo = Calendar.getInstance().getTimeInMillis() - 1 * 59 * 1000;
-    assertFalse(counter.shouldBlock("user", almostOneMinuteAgo));
+  public void usersAreBlockedOnFourthAttempt() {
+    assertFalse(counter.shouldBlock("user"));
     assertFalse(counter.shouldBlock("user"));
     assertFalse(counter.shouldBlock("user"));
     assertTrue(counter.shouldBlock("user"));
   }
 
   @Test
-  public void successfulLoginRemovesAllEntries() {
-    counter.shouldBlock("user");
-    counter.shouldBlock("user");
-    assertEquals(2, counter.getHistory("user").seen.size());
+  public void usersAreStillBlockedShortlyAfterwards() {
+    long firstRequestTime = 1;
+    assertFalse(counter.shouldBlock("user", firstRequestTime));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 1));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
+  }
+
+  @Test
+  public void blockExtendsOneMinuteAfterLastAttempt() {
+    long firstRequestTime = 1;
+    assertFalse(counter.shouldBlock("user", firstRequestTime));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 1));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
+
+    long oneMinute = 60 * 1000;
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 2 + oneMinute));
+  }
+
+  @Test
+  public void usersAreUnblockedAutomaticallyAfterTimeout() throws Exception {
+    long firstRequestTime = 1;
+    assertFalse(counter.shouldBlock("user", firstRequestTime));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 1));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
+
+    long oneMinute = 60 * 1000;
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 + oneMinute));
+  }
+
+  @Test
+  public void userLockoutDoesntGetExtendedByRequestsDuringLockout() throws Exception {
+    long firstRequestTime = 1;
+    assertFalse(counter.shouldBlock("user", firstRequestTime));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 1));
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 2));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 3));
+
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 1000));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 2000));
+    assertTrue(counter.shouldBlock("user", firstRequestTime + 3000));
+
+    long oneMinute = 60 * 1000;
+    assertFalse(counter.shouldBlock("user", firstRequestTime + 4 + oneMinute));
+  }
+
+  @Test
+  public void successfulLoginClearsHistory() {
+    assertFalse(counter.shouldBlock("user"));
+    assertFalse(counter.shouldBlock("user"));
+    counter.successfulLogin("user");
+
+    assertFalse(counter.shouldBlock("user"));
+    assertFalse(counter.shouldBlock("user"));
+    counter.successfulLogin("user");
+
+    assertFalse(counter.shouldBlock("user"));
+    assertFalse(counter.shouldBlock("user"));
+    counter.successfulLogin("user");
+
+    assertFalse(counter.shouldBlock("user"));
+    assertFalse(counter.shouldBlock("user"));
+    assertFalse(counter.shouldBlock("user"));
+    assertTrue(counter.shouldBlock("user"));
 
     counter.successfulLogin("user");
-    assertNull(counter.getHistory("user"));
+    assertFalse(counter.shouldBlock("user"));
   }
 }
